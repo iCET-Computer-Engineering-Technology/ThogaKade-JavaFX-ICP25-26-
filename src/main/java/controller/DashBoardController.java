@@ -5,8 +5,9 @@ import model.dto.RoomInfoDTO;
 
 import java.sql.*;
 
-public class DashBoardController {
+public class DashBoardController implements DashBoardService {
 
+    @Override
     public void addRoomDetails(String roomId, String type, double pricePerNight, int maxGuests, boolean availability, String description, int floor) {
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/hotel_reservation_system", "root", "1234");

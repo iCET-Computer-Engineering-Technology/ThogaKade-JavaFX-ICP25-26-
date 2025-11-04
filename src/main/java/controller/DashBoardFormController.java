@@ -15,6 +15,10 @@ import java.util.ResourceBundle;
 
 public class DashBoardFormController implements Initializable {
 
+
+
+    DashBoardService dashBoardService = new DashBoardController();
+
     ObservableList<RoomInfoDTO> roomInfoDTOS = FXCollections.observableArrayList();
 
 
@@ -129,8 +133,9 @@ public class DashBoardFormController implements Initializable {
         String description = txtDescription.getText();
         int floor = cmbFloor.getValue();
 
-        DashBoardController dashBoardController = new DashBoardController();
-        dashBoardController.addRoomDetails(roomId, type, pricePerNight, maxGuests,availability, description, floor);
+
+        dashBoardService.addRoomDetails(roomId, type, pricePerNight, maxGuests,availability, description, floor);
+
         clearFields();
         loadRoomsDetails();
 
@@ -141,8 +146,8 @@ public class DashBoardFormController implements Initializable {
     @FXML
     void btnDeleteOnAction(ActionEvent event) {
 
-        DashBoardController dashBoardController = new DashBoardController();
-        dashBoardController.deleteRoomDetails(txtRoomId.getText());
+
+        dashBoardService.deleteRoomDetails(txtRoomId.getText());
         clearFields();
         loadRoomsDetails();
     }
@@ -162,8 +167,8 @@ public class DashBoardFormController implements Initializable {
         String description = txtDescription.getText();
         int floor = cmbFloor.getValue();
 
-        DashBoardController dashBoardController = new DashBoardController();
-        dashBoardController.updateRoomDetails(roomId, type, pricePerNight, maxGuests, availability, description, floor);
+
+        dashBoardService.updateRoomDetails(roomId, type, pricePerNight, maxGuests, availability, description, floor);
         clearFields();
         loadRoomsDetails();
 
@@ -181,8 +186,8 @@ public class DashBoardFormController implements Initializable {
 
         roomInfoDTOS.clear();
 
-        DashBoardController dashBoardController = new DashBoardController();
-        tblRoomInfo.setItems(dashBoardController.getAllRoomsDetails());
+
+        tblRoomInfo.setItems(dashBoardService.getAllRoomsDetails());
     }
 
     //cheack availability method
