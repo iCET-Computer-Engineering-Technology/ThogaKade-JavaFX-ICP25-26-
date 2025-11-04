@@ -1,9 +1,9 @@
 package controller;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import javafx.collections.ObservableList;
+import model.dto.RoomInfoDTO;
+
+import java.sql.*;
 
 public class DashBoardController {
 
@@ -33,18 +33,43 @@ public class DashBoardController {
     public void deleteRoomDetails(String roomId) {
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/hotel_reservation_system", "root", "1234");
-
             PreparedStatement pstm = connection.prepareStatement("DELETE FROM rooms WHERE room_id = ?");
-
 
             pstm.setObject(1,roomId);
             pstm.executeUpdate();
 
-
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+    public ObservableList<RoomInfoDTO> getAllRoomsDetails() {
+
+        ObservableList<RoomInfoDTO> roomDetails = javafx.collections.FXCollections.observableArrayList();
+
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/hotel_reservation_system", "root", "1234");
+            String SQL = "SELECT * FROM rooms";
+            PreparedStatement preparedStatement = connection.prepareStatement(SQL);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+
+                roomDetails.add(new RoomInfoDTO(
+                        // column name pass
+                        resultSet.getString("room_id"),
+                        resultSet.getString("type"),
+                        resultSet.getDouble("price_per_night"),
+                        resultSet.getInt("max_guests"),
+                        resultSet.getBoolean("availability"),
+                        resultSet.getString("description"),
+                        resultSet.getInt("floor")
+                        )
+                );
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return roomDetails;
     }
 }
 

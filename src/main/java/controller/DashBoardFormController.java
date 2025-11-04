@@ -215,7 +215,7 @@ public class DashBoardFormController implements Initializable {
                         resultSet.getString("description"),
                         resultSet.getInt("floor")
                 );
-                System.out.println(roomInfoDTO);
+//                System.out.println(roomInfoDTO);
                 roomInfoDTOS.add(roomInfoDTO);
             }
         } catch (SQLException e) {
