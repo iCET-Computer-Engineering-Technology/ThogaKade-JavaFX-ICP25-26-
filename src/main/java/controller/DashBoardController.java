@@ -71,5 +71,28 @@ public class DashBoardController {
         }
         return roomDetails;
     }
+
+    public void updateRoomDetails(String roomId, String type, double pricePerNight, int maxGuests, boolean availability, String description, int floor) {
+
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/hotel_reservation_system", "root", "1234");
+
+            String SQL = "UPDATE rooms SET type = ?, price_per_night = ?, max_guests = ?, availability = ?, description = ?, floor = ? WHERE room_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(SQL);
+
+            preparedStatement.setObject(1, type);
+            preparedStatement.setObject(2, pricePerNight);
+            preparedStatement.setObject(3, maxGuests);
+            preparedStatement.setObject(4, availability);
+            preparedStatement.setObject(5, description);
+            preparedStatement.setObject(6, floor);
+            preparedStatement.setObject(7, roomId);
+
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
 

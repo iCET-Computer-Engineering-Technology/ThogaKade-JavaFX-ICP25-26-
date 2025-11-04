@@ -162,27 +162,11 @@ public class DashBoardFormController implements Initializable {
         String description = txtDescription.getText();
         int floor = cmbFloor.getValue();
 
-        try {
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/hotel_reservation_system", "root", "1234");
+        DashBoardController dashBoardController = new DashBoardController();
+        dashBoardController.updateRoomDetails(roomId, type, pricePerNight, maxGuests, availability, description, floor);
+        clearFields();
+        loadRoomsDetails();
 
-            String SQL = "UPDATE rooms SET type = ?, price_per_night = ?, max_guests = ?, availability = ?, description = ?, floor = ? WHERE room_id = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(SQL);
-
-            preparedStatement.setObject(1, type);
-            preparedStatement.setObject(2, pricePerNight);
-            preparedStatement.setObject(3, maxGuests);
-            preparedStatement.setObject(4, availability);
-            preparedStatement.setObject(5, description);
-            preparedStatement.setObject(6, floor);
-            preparedStatement.setObject(7, roomId);
-
-            preparedStatement.executeUpdate();
-            clearFields();
-            loadRoomsDetails();
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @FXML
@@ -197,31 +181,8 @@ public class DashBoardFormController implements Initializable {
 
         roomInfoDTOS.clear();
 
-        try {
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/hotel_reservation_system", "root", "1234");
-            String SQL = "SELECT * FROM rooms";
-            PreparedStatement preparedStatement = connection.prepareStatement(SQL);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
-                RoomInfoDTO roomInfoDTO = new RoomInfoDTO(
-
-                        // column name pass
-                        resultSet.getString("room_id"),
-                        resultSet.getString("type"),
-                        resultSet.getDouble("price_per_night"),
-                        resultSet.getInt("max_guests"),
-                        resultSet.getBoolean("availability"),
-                        resultSet.getString("description"),
-                        resultSet.getInt("floor")
-                );
-//                System.out.println(roomInfoDTO);
-                roomInfoDTOS.add(roomInfoDTO);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        tblRoomInfo.setItems(roomInfoDTOS);
+        DashBoardController dashBoardController = new DashBoardController();
+        tblRoomInfo.setItems(dashBoardController.getAllRoomsDetails());
     }
 
     //cheack availability method
