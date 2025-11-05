@@ -1,5 +1,7 @@
 package controller;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -7,11 +9,16 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.text.Text;
+import javafx.util.Duration;
 import model.dto.RoomInfoDTO;
 
 import java.net.URL;
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
+import java.util.Locale;
 
 public class DashBoardFormController implements Initializable {
 
@@ -82,6 +89,13 @@ public class DashBoardFormController implements Initializable {
     @FXML
     private TextField txtRoomId;
 
+    @FXML
+    private Text txtTime;
+
+    @FXML
+    private Text txtDate;
+
+
     //-------------------------------initialize method------------------------------------
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -98,7 +112,7 @@ public class DashBoardFormController implements Initializable {
         loadRoomsDetails();
 
         //load combo box data
-        ObservableList<String> roomTypes = FXCollections.observableArrayList("Single", "Double", "Suite", "Deluxe");
+        ObservableList<String> roomTypes = FXCollections.observableArrayList("Single", "Double", "Suite", "Deluxe","Family");
         cmbType.setItems(roomTypes);
 
         ObservableList<Integer> maxGuestsOptions = FXCollections.observableArrayList(1, 2, 3, 4, 5, 6);
@@ -119,6 +133,7 @@ public class DashBoardFormController implements Initializable {
                setSelectedValue(newValue);
            }
        });
+       loadDateAndTime();
     }
 
     //----------------------------------Button actions-----------------------------------------
@@ -176,6 +191,7 @@ public class DashBoardFormController implements Initializable {
 
     @FXML
     void btnClearOnAction(ActionEvent event) {
+        clearFields();
 
     }
 
@@ -229,5 +245,37 @@ public class DashBoardFormController implements Initializable {
         txtDescription.setText(selectedValue.getDescription());
         cmbFloor.setValue(selectedValue.getFloor());
     }
-}
+    //load date and time method
+    private void loadDateAndTime() {
 
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh : mm : ss a", Locale.ENGLISH);
+        DateTimeFormatter monthYearFormatter = DateTimeFormatter.ofPattern("MMMM yyyy");
+
+        Runnable updater = () -> {
+            LocalDateTime now = LocalDateTime.now();
+            txtTime.setText(now.format(timeFormatter));
+            int day = now.getDayOfMonth();
+            String dayWithSuffix = day + getDayOfMonthSuffix(day);
+            String monthYear = now.format(monthYearFormatter);
+            txtDate.setText(String.format("%s %s", String.format("%02d", day) + getDayOfMonthSuffix(day), monthYear));
+        };
+
+        updater.run();
+
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> updater.run()));
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
+    }
+
+    private String getDayOfMonthSuffix(int n) {
+        if (n >= 11 && n <= 13) {
+            return "th";
+        }
+        switch (n % 10) {
+            case 1: return "st";
+            case 2: return "nd";
+            case 3: return "rd";
+            default: return "th";
+        }
+    }
+}
